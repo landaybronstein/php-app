@@ -1,0 +1,38 @@
+services:
+
+  mysql:
+    image: mysql
+    volumes:
+      - ./mysql-data:/var/lib/mysql   
+    environment:
+      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: user
+      MYSQL_DATABASE: project
+    networks:
+      - phpapp
+
+  server:
+    build: ./images/php
+    ports:
+      - 80:80
+    volumes:
+      - ./app:/var/www/html
+    networks:
+      - phpapp
+    depends_on:
+      - mysql
+
+  phpmyadmin:
+    image: phpmyadmin
+    ports:
+      - 1500:80
+    environment:
+      - PMA_HOST=mysql
+    networks:
+      - phpapp
+    depends_on:
+      - mysql
+
+networks:
+  phpapp: 
